@@ -1,0 +1,52 @@
+version: 1
+descripcion: Ontología clínica personal (plantilla). Sin datos de paciente.
+object_types:
+  - nombre: Paciente
+    carpeta: wiki/paciente
+    propiedades: [nacimiento, sexo, documento, eps, residencia, cuidador]
+  - nombre: Condicion
+    carpeta: wiki/condiciones
+    propiedades: [cie10, snomed_ct, estado, inicio, etiologia, certeza]
+  - nombre: Crisis
+    carpeta: wiki/crisis
+    propiedades: [fecha, hora, tipo_ilae_2017, duracion_min, desencadenante, sueno, medicacion_vigente, fuente, confianza]
+  - nombre: Medicamento
+    carpeta: wiki/medicamentos
+    propiedades: [estado, atc, rxnorm, dosis, dosis_dia_mg, mecanismo, motivo_suspension]
+  - nombre: Estudio
+    carpeta: wiki/estudios
+    propiedades: [fecha, modalidad, institucion, resultado, loinc]
+  - nombre: Encuentro
+    carpeta: wiki/encuentros
+    propiedades: [fecha, tipo, profesional, ips]
+  - nombre: Persona
+    carpeta: wiki/personas
+    propiedades: [rol, especialidad, institucion]
+  - nombre: Organizacion
+    carpeta: wiki/organizaciones
+    propiedades: [tipo, ciudad]
+  - nombre: Tramite
+    carpeta: wiki/tramites
+    propiedades: [fecha_radicacion, plazo_legal_dias, vence, estado]
+  - nombre: Evidencia
+    carpeta: wiki/evidencia
+    propiedades: [doi, pmid, nivel, anio]
+  - nombre: Fuente
+    carpeta: wiki/fuentes
+    propiedades: [archivo_raw, fecha_documento, legibilidad]
+link_types:
+  - {origen: Paciente, relacion: tiene, destino: Condicion}
+  - {origen: Paciente, relacion: presenta, destino: Crisis}
+  - {origen: Condicion, relacion: se_trata_con, destino: Medicamento}
+  - {origen: Encuentro, relacion: ordena, destino: Estudio}
+  - {origen: Encuentro, relacion: prescribe, destino: Medicamento}
+  - {origen: Estudio, relacion: produce, destino: Hallazgo}
+  - {origen: Hallazgo, relacion: apoya_o_contradice, destino: Condicion}
+  - {origen: Tramite, relacion: garantiza, destino: Medicamento}
+  - {origen: Fuente, relacion: alimenta, destino: CualquierObjeto}
+reglas:
+  - Todo medicamento activo requiere dosis, fuente de prescripción y vencimiento de fórmula.
+  - Toda crisis requiere fecha y fuente.
+  - Estudio ordenado sin resultado a 90 días se marca como brecha.
+  - Trámite con plazo vencido sin respuesta genera alerta.
+  - Nunca versionar raw/ ni páginas con datos identificables.
